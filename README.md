@@ -2,6 +2,10 @@
 
 Replicate Instragram-style filters in Objective-C (Swift 3.0 Compatibility).
 
+### Easy to use:
+- Add image to IGRFilterCombine,
+- Read filtered image at index.
+
 [![Build Status](https://travis-ci.org/IGRSoft/IGRFilterCombine.svg)](https://travis-ci.org/IGRSoft/IGRFilterCombine)
 [![Platform](https://img.shields.io/badge/platform-iOS-lightgrey.svg?style=flat)](http://www.apple.com/ios/)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/IGRFilterCombine.svg)](https://img.shields.io/cocoapods/v/IGRFilterCombine.svg)

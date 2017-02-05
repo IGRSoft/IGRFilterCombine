@@ -1,0 +1,14 @@
+//
+//  IGRFilterCombine.modulemap
+//  IGRFilterCombine
+//
+//  Created by Vitalii Parovishnyk on 1/2/17.
+//  Copyright © 2017 IGR Software. All rights reserved.
+//
+
+framework module IGRFilterCombine {
+    umbrella header "IGRFilterCombine.h"
+        
+    module * { export * }
+    export *
+}

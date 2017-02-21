@@ -90,7 +90,6 @@
                completeBlock:^(UIImage * _Nullable processedImage) {
                    [weak setFilteredPreviewImage:processedImage toIndex:idx];
                    weak.processedPreviewImagesCompletion(processedImage, idx);
-                   NSLog(@"processed preview at index - %@", @(idx));
                }];
     }];
     
@@ -106,7 +105,6 @@
                                                             completeBlock:^(UIImage * _Nullable processedImage) {
                                                                 [weak setFilteredImage:processedImage toIndex:idx];
                                                                 weak.processedImagesCompletion(processedImage, idx);
-                                                                NSLog(@"processed image at index - %@", @(idx));
                                                             }];
         [weak setCancelBlock:cancelBlock toIndex:idx];
     }];

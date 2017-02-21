@@ -57,7 +57,7 @@
                                                                    inDirectory:@"Configs"];
         NSArray *toolbarElements = [NSArray arrayWithContentsOfFile:path];
         
-        NSMutableArray *_filters = [NSMutableArray arrayWithCapacity:toolbarElements.count];
+        NSMutableArray *_filters = [NSMutableArray array];
         [toolbarElements enumerateObjectsUsingBlock:^(NSDictionary *shaderInfo, NSUInteger idx, BOOL * _Nonnull stop) {
             
             IGRBaseShaderFilter *filter = [[IGRBaseShaderFilter alloc] initWithDictionary:shaderInfo];

@@ -31,10 +31,7 @@
 @property (nonatomic, copy) IGRFilterCombineImageCompletion processedImagesCompletion;
 @property (nonatomic, copy) IGRFilterCombineImageCompletion processedPreviewImagesCompletion;
 
-@property (strong, nonatomic) dispatch_queue_t processedImagesQueue;
-@property (strong, nonatomic) dispatch_queue_t cancelBlocksQueue;
-
-@property (nonatomic, copy  ) IGRBaseShaderFilterCancelBlock cancelFilterProcess;
+@property (nonatomic, copy) IGRBaseShaderFilterCancelBlock cancelFilterProcess;
 
 @end
 
@@ -57,19 +54,16 @@
     
     UIImage *image = [UIImage new];
     IGRBaseShaderFilterCancelBlock cancelBlock = ^{};
-    NSMutableArray <UIImage *> *images = [NSMutableArray arrayWithCapacity:self.count];
-    _dummyCancelBlocks = [NSMutableArray arrayWithCapacity:self.count];
+    NSMutableArray <UIImage *> *images = [NSMutableArray array];
+    _dummyCancelBlocks = [NSMutableArray array];
     [_cachedFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
         [images addObject:image];
         [_dummyCancelBlocks addObject:cancelBlock];
     }];
     
-    _processedImages = images;
-    _processedPreviewImages = images;
+    _processedImages = [images mutableCopy];
+    _processedPreviewImages = [images mutableCopy];
     _cancelBlocks = [_dummyCancelBlocks mutableCopy];
-    
-    _processedImagesQueue = dispatch_queue_create("com.igrsoft.IGRFilterCombine.processedImagesQueue", DISPATCH_QUEUE_CONCURRENT);
-    _cancelBlocksQueue = dispatch_queue_create("com.igrsoft.IGRFilterCombine.cancelBlocksQueue", DISPATCH_QUEUE_CONCURRENT);
 }
 
 - (void)setOriginalImage:(UIImage *)originalImage
@@ -96,6 +90,7 @@
                completeBlock:^(UIImage * _Nullable processedImage) {
                    [weak setFilteredPreviewImage:processedImage toIndex:idx];
                    weak.processedPreviewImagesCompletion(processedImage, idx);
+                   NSLog(@"processed preview at index - %@", @(idx));
                }];
     }];
     
@@ -109,8 +104,9 @@
         [weak setFilteredImage:originalImage toIndex:idx];
         IGRBaseShaderFilterCancelBlock cancelBlock = [filter processImage:originalImage
                                                             completeBlock:^(UIImage * _Nullable processedImage) {
-                                                                [weak setFilteredPreviewImage:processedImage toIndex:idx];
+                                                                [weak setFilteredImage:processedImage toIndex:idx];
                                                                 weak.processedImagesCompletion(processedImage, idx);
+                                                                NSLog(@"processed image at index - %@", @(idx));
                                                             }];
         [weak setCancelBlock:cancelBlock toIndex:idx];
     }];
@@ -134,20 +130,12 @@
 
 - (void)setFilteredImage:(UIImage *)image toIndex:(NSUInteger)imageIndex
 {
-    UIImage *filteredImage = [image copy];
-    dispatch_barrier_async(self.processedImagesQueue, ^{
-        self.processedImages[imageIndex] = filteredImage;
-    });
+    self.processedImages[imageIndex] = [image copy];
 }
 
 - (UIImage *)filteredImageAtIndex:(NSUInteger)imageIndex
 {
-    __block UIImage *filteredImage;
-    dispatch_sync(self.processedImagesQueue, ^{
-        filteredImage = self.processedImages[imageIndex];
-    });
-    
-    return filteredImage;
+    return self.processedImages[imageIndex];
 }
 
 - (void)setFilteredPreviewImage:(UIImage *)image toIndex:(NSUInteger)imageIndex
@@ -162,19 +150,12 @@
 
 - (void)setCancelBlock:(IGRBaseShaderFilterCancelBlock)block toIndex:(NSUInteger)imageIndex
 {
-    IGRBaseShaderFilterCancelBlock cancelBlock = [block copy];
-    dispatch_barrier_async(self.cancelBlocksQueue, ^{
-        self.cancelBlocks[imageIndex] = cancelBlock;
-    });
+    self.cancelBlocks[imageIndex] = block;
 }
 
 - (void)cancelImageAtIndex:(NSUInteger)imageIndex
 {
-    __block IGRBaseShaderFilterCancelBlock cancelBlock;
-    dispatch_sync(self.cancelBlocksQueue, ^{
-        cancelBlock = self.cancelBlocks[imageIndex];
-    });
-    
+    IGRBaseShaderFilterCancelBlock cancelBlock = self.cancelBlocks[imageIndex];
     cancelBlock();
 }
 

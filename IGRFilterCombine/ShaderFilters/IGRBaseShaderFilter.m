@@ -227,7 +227,8 @@
 #pragma mark -
 #pragma mark GPUImageInput
 
-- (void)setInputFramebuffer:(GPUImageFramebuffer *)newInputFramebuffer atIndex:(NSInteger)textureIndex
+- (void)setInputFramebuffer:(GPUImageFramebuffer *)newInputFramebuffer
+                    atIndex:(NSInteger)textureIndex
 {
     if (textureIndex == 0)
     {
@@ -295,7 +296,7 @@
 
 - (NSArray <GPUImagePicture *> *)resourcesForFiles:(NSArray <NSString *> *)files
 {
-    NSMutableArray *resources = [NSMutableArray arrayWithCapacity:files.count];
+    NSMutableArray *resources = [NSMutableArray array];
     
     for (NSString *file in files)
     {

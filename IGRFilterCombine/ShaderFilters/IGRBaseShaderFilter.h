@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^IGRBaseShaderFilterCompletionBlock)(UIImage * _Nullable processedImage);
-typedef void(^IGRBaseShaderFilterCancelBlock)();
+typedef void(^IGRBaseShaderFilterCancelBlock)(void);
 
 @interface IGRBaseShaderFilter : GPUImageFilter
 

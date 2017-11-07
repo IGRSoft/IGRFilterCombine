@@ -11,6 +11,8 @@
 #import "UIImage+IGRFilterCombine.h"
 #import "NSBundle+IGRFilterCombine.h"
 
+const NSUInteger kOriginalImageIndex = 100000;
+
 @interface IGRFilterCombine ()
 {
     NSArray <IGRBaseShaderFilter *> *_cachedFilters;
@@ -24,9 +26,9 @@
 @property (nonatomic, strong) NSArray <IGRBaseShaderFilter *> *processedImagesFilters;
 @property (nonatomic, strong) NSArray <IGRBaseShaderFilter *> *processedPreviewImagesFilters;
 
-@property (nonatomic, copy) NSMutableArray <IGRBaseShaderFilterCancelBlock> *cancelBlocks;
-@property (nonatomic, copy) NSMutableArray <UIImage *> *processedImages;
-@property (nonatomic, copy) NSMutableArray <UIImage *> *processedPreviewImages;
+@property (nonatomic, strong) NSMutableArray <IGRBaseShaderFilterCancelBlock> *cancelBlocks;
+@property (nonatomic, strong) NSMutableArray <NSString *> *processedImages;
+@property (nonatomic, strong) NSMutableArray <UIImage *> *processedPreviewImages;
 
 @property (nonatomic, copy) IGRFilterCombineImageCompletion processedImagesCompletion;
 @property (nonatomic, copy) IGRFilterCombineImageCompletion processedPreviewImagesCompletion;
@@ -53,15 +55,18 @@
     _cachedFilters = [NSBundle getFilters];
     
     UIImage *image = [UIImage new];
+    NSString *imageName = [self imagePathAtIndex:kOriginalImageIndex];
     IGRBaseShaderFilterCancelBlock cancelBlock = ^{};
+    NSMutableArray <NSString *> *imagesName = [NSMutableArray array];
     NSMutableArray <UIImage *> *images = [NSMutableArray array];
     _dummyCancelBlocks = [NSMutableArray array];
     [_cachedFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
+        [imagesName addObject:imageName];
         [images addObject:image];
         [_dummyCancelBlocks addObject:cancelBlock];
     }];
     
-    _processedImages = [images mutableCopy];
+    _processedImages = [imagesName mutableCopy];
     _processedPreviewImages = [images mutableCopy];
     _cancelBlocks = [_dummyCancelBlocks mutableCopy];
 }
@@ -69,6 +74,10 @@
 - (void)setOriginalImage:(UIImage *)originalImage
 {
     _originalImage = originalImage;
+    NSData *imageData = UIImagePNGRepresentation(originalImage);
+    NSString *imagePath = [self imagePathAtIndex:kOriginalImageIndex];
+    [imageData writeToFile:imagePath atomically:YES];
+    
     UIImage *thumbImage = [originalImage igr_aspectFillImageWithSize:[self.delegate previewSize]];
     
     [_cancelBlocks enumerateObjectsUsingBlock:^(IGRBaseShaderFilterCancelBlock  _Nonnull cancelBlock, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -128,12 +137,20 @@
 
 - (void)setFilteredImage:(UIImage *)image toIndex:(NSUInteger)imageIndex
 {
-    self.processedImages[imageIndex] = [image copy];
+    NSString *imagePath = [self imagePathAtIndex:imageIndex];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSData *imageData = UIImagePNGRepresentation(image);
+
+        [imageData writeToFile:imagePath atomically:YES];
+    });
+    
+    self.processedImages[imageIndex] = [imagePath copy];
 }
 
 - (UIImage *)filteredImageAtIndex:(NSUInteger)imageIndex
 {
-    return self.processedImages[imageIndex];
+    NSString *imagePath = self.processedImages[imageIndex];
+    return [[UIImage alloc] initWithContentsOfFile:imagePath];
 }
 
 - (void)setFilteredPreviewImage:(UIImage *)image toIndex:(NSUInteger)imageIndex
@@ -162,5 +179,10 @@
     return _cachedFilters.count;
 }
 
+- (NSString *)imagePathAtIndex:(NSUInteger)imageIndex {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSString *cacheDirectory = paths.firstObject;
+    return [NSString stringWithFormat:@"%@/%@.png", cacheDirectory, @(kOriginalImageIndex + imageIndex)];
+}
 
 @end

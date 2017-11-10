@@ -3,7 +3,7 @@
 Pod::Spec.new do |s|
 
   s.name         = 'IGRFilterCombine'
-  s.version      = '0.2.2'
+  s.version      = '0.2.3'
   s.license      = { :type => 'MIT', :file => 'LICENSE' }
   s.summary      = 'Shader Filters View'
 

@@ -464,12 +464,11 @@
 			baseConfigurationReference = 2FCB1839DA4798D1FAB5F60E /* Pods-IGRFilterCombine.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CURRENT_PROJECT_VERSION = 100.1;
+				CURRENT_PROJECT_VERSION = 23;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = DMP42GVPJ3;
-				DYLIB_COMPATIBILITY_VERSION = 100.0;
-				DYLIB_CURRENT_VERSION = 100.1;
+				DYLIB_COMPATIBILITY_VERSION = 0.2.0;
+				DYLIB_CURRENT_VERSION = 0.2.3;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/IGRFilterCombineFramework/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -488,12 +487,11 @@
 			baseConfigurationReference = 8B85DC6AAB498900A270F6E5 /* Pods-IGRFilterCombine.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				CURRENT_PROJECT_VERSION = 100.1;
+				CURRENT_PROJECT_VERSION = 23;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = DMP42GVPJ3;
-				DYLIB_COMPATIBILITY_VERSION = 100.0;
-				DYLIB_CURRENT_VERSION = 100.1;
+				DYLIB_COMPATIBILITY_VERSION = 0.2.0;
+				DYLIB_CURRENT_VERSION = 0.2.3;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/IGRFilterCombineFramework/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -517,7 +515,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/IGRFilterCombineResources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.igrsoft.IGRInstaFilterResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};
@@ -533,7 +530,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/IGRFilterCombineResources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.igrsoft.IGRInstaFilterResources;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
 			};

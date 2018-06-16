@@ -14,10 +14,6 @@
 const NSUInteger kOriginalImageIndex = 100000;
 
 @interface IGRFilterCombine ()
-{
-    NSArray <IGRBaseShaderFilter *> *_cachedFilters;
-    NSMutableArray <IGRBaseShaderFilterCancelBlock> *_dummyCancelBlocks;
-}
 
 @property (nonatomic, strong) UIImage *originalImage;
 
@@ -34,6 +30,9 @@ const NSUInteger kOriginalImageIndex = 100000;
 @property (nonatomic, copy) IGRFilterCombineImageCompletion processedPreviewImagesCompletion;
 
 @property (nonatomic, copy) IGRBaseShaderFilterCancelBlock cancelFilterProcess;
+
+@property (nonatomic, strong) NSArray <IGRBaseShaderFilter *> *cachedFilters;
+@property (nonatomic, strong) NSMutableArray <IGRBaseShaderFilterCancelBlock> *dummyCancelBlocks;
 
 @end
 
@@ -60,10 +59,12 @@ const NSUInteger kOriginalImageIndex = 100000;
     NSMutableArray <NSString *> *imagesName = [NSMutableArray array];
     NSMutableArray <UIImage *> *images = [NSMutableArray array];
     _dummyCancelBlocks = [NSMutableArray array];
-    [_cachedFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
+    
+    __weak typeof(self) weak = self;
+    [self.cachedFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
         [imagesName addObject:imageName];
         [images addObject:image];
-        [_dummyCancelBlocks addObject:cancelBlock];
+        [weak.dummyCancelBlocks addObject:cancelBlock];
     }];
     
     _processedImages = [imagesName mutableCopy];
@@ -85,14 +86,13 @@ const NSUInteger kOriginalImageIndex = 100000;
     }];
     _cancelBlocks = [_dummyCancelBlocks mutableCopy];
     
-    __weak typeof(self) weak = self;
-    
     //Cleean and Setup preview image
+    __weak typeof(self) weak = self;
     [_processedPreviewImagesFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
         [filter removeAllTargets];
         [filter removeOutputFramebuffer];
     }];
-    _processedPreviewImagesFilters = [_cachedFilters copy];
+    _processedPreviewImagesFilters = [self.cachedFilters copy];
     [_processedPreviewImagesFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
         [weak setFilteredPreviewImage:thumbImage toIndex:idx];
         [filter processImage:thumbImage
@@ -107,7 +107,7 @@ const NSUInteger kOriginalImageIndex = 100000;
         [filter removeAllTargets];
         [filter removeOutputFramebuffer];
     }];
-    _processedImagesFilters = [_cachedFilters copy];
+    _processedImagesFilters = [self.cachedFilters copy];
     [_processedImagesFilters enumerateObjectsUsingBlock:^(IGRBaseShaderFilter *filter, NSUInteger idx, BOOL * _Nonnull stop) {
         [weak setFilteredImage:originalImage toIndex:idx];
         IGRBaseShaderFilterCancelBlock cancelBlock = [filter processImage:originalImage

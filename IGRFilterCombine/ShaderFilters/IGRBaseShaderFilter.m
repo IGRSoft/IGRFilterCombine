@@ -10,34 +10,34 @@
 #import "IGRBaseShaderFilterConstants.h"
 #import "NSBundle+IGRFilterCombine.h"
 
-@interface IGRBaseShaderFilter () {
-    BOOL hasSetTexture1;
-    
-    GPUImageFramebuffer *inputFramebuffer2;
-    GLint textureCoordinateAttribute2;
-    GLint inputTextureUniform2;
-    BOOL hasSetTexture2;
-    
-    GPUImageFramebuffer *inputFramebuffer3;
-    GLint textureCoordinateAttribute3;
-    GLint inputTextureUniform3;
-    BOOL hasSetTexture3;
-    
-    GPUImageFramebuffer *inputFramebuffer4;
-    GLint textureCoordinateAttribute4;
-    GLint inputTextureUniform4;
-    BOOL hasSetTexture4;
-    
-    GPUImageFramebuffer *inputFramebuffer5;
-    GLint textureCoordinateAttribute5;
-    GLint inputTextureUniform5;
-    BOOL hasSetTexture5;
-    
-    GPUImageFramebuffer *inputFramebuffer6;
-    GLint textureCoordinateAttribute6;
-    GLint inputTextureUniform6;
-    BOOL hasSetTexture6;
-}
+@interface IGRBaseShaderFilter ()
+
+@property (nonatomic, assign) BOOL hasSetTexture1;
+
+@property (nonatomic, strong) GPUImageFramebuffer *inputFramebuffer2;
+@property (nonatomic, assign) GLint textureCoordinateAttribute2;
+@property (nonatomic, assign) GLint inputTextureUniform2;
+@property (nonatomic, assign) BOOL hasSetTexture2;
+
+@property (nonatomic, strong) GPUImageFramebuffer *inputFramebuffer3;
+@property (nonatomic, assign) GLint textureCoordinateAttribute3;
+@property (nonatomic, assign) GLint inputTextureUniform3;
+@property (nonatomic, assign) BOOL hasSetTexture3;
+
+@property (nonatomic, strong) GPUImageFramebuffer *inputFramebuffer4;
+@property (nonatomic, assign) GLint textureCoordinateAttribute4;
+@property (nonatomic, assign) GLint inputTextureUniform4;
+@property (nonatomic, assign) BOOL hasSetTexture4;
+
+@property (nonatomic, strong) GPUImageFramebuffer *inputFramebuffer5;
+@property (nonatomic, assign) GLint textureCoordinateAttribute5;
+@property (nonatomic, assign) GLint inputTextureUniform5;
+@property (nonatomic, assign) BOOL hasSetTexture5;
+
+@property (nonatomic, strong) GPUImageFramebuffer *inputFramebuffer6;
+@property (nonatomic, assign) GLint textureCoordinateAttribute6;
+@property (nonatomic, assign) GLint inputTextureUniform6;
+@property (nonatomic, assign) BOOL hasSetTexture6;
 
 @property (nonatomic, copy  ) NSString *shaderName;
 
@@ -88,28 +88,29 @@
     
     inputRotation = kGPUImageNoRotation;
     
+    __weak typeof(self) weak = self;
     runSynchronouslyOnVideoProcessingQueue(^{
         [GPUImageContext useImageProcessingContext];
         
-        textureCoordinateAttribute2 = [filterProgram attributeIndex:@"inputTextureCoordinate2"];
-        inputTextureUniform2 = [filterProgram uniformIndex:@"inputImageTexture2"];
-        glEnableVertexAttribArray(textureCoordinateAttribute2);
+        weak.textureCoordinateAttribute2 = [weak.internalFilterProgram attributeIndex:@"inputTextureCoordinate2"];
+        weak.inputTextureUniform2 = [weak.internalFilterProgram uniformIndex:@"inputImageTexture2"];
+        glEnableVertexAttribArray(weak.textureCoordinateAttribute2);
         
-        textureCoordinateAttribute3 = [filterProgram attributeIndex:@"inputTextureCoordinate3"];
-        inputTextureUniform3 = [filterProgram uniformIndex:@"inputImageTexture3"];
-        glEnableVertexAttribArray(textureCoordinateAttribute3);
+        weak.textureCoordinateAttribute3 = [weak.internalFilterProgram attributeIndex:@"inputTextureCoordinate3"];
+        weak.inputTextureUniform3 = [weak.internalFilterProgram uniformIndex:@"inputImageTexture3"];
+        glEnableVertexAttribArray(weak.textureCoordinateAttribute3);
         
-        textureCoordinateAttribute4 = [filterProgram attributeIndex:@"inputTextureCoordinate4"];
-        inputTextureUniform4 = [filterProgram uniformIndex:@"inputImageTexture4"];
-        glEnableVertexAttribArray(textureCoordinateAttribute4);
+        weak.textureCoordinateAttribute4 = [weak.internalFilterProgram attributeIndex:@"inputTextureCoordinate4"];
+        weak.inputTextureUniform4 = [weak.internalFilterProgram uniformIndex:@"inputImageTexture4"];
+        glEnableVertexAttribArray(weak.textureCoordinateAttribute4);
         
-        textureCoordinateAttribute5 = [filterProgram attributeIndex:@"inputTextureCoordinate5"];
-        inputTextureUniform5 = [filterProgram uniformIndex:@"inputImageTexture5"];
-        glEnableVertexAttribArray(textureCoordinateAttribute5);
+        weak.textureCoordinateAttribute5 = [weak.internalFilterProgram attributeIndex:@"inputTextureCoordinate5"];
+        weak.inputTextureUniform5 = [weak.internalFilterProgram uniformIndex:@"inputImageTexture5"];
+        glEnableVertexAttribArray(weak.textureCoordinateAttribute5);
         
-        textureCoordinateAttribute6 = [filterProgram attributeIndex:@"inputTextureCoordinate6"];
-        inputTextureUniform6 = [filterProgram uniformIndex:@"inputImageTexture6"];
-        glEnableVertexAttribArray(textureCoordinateAttribute6);
+        weak.textureCoordinateAttribute6 = [weak.internalFilterProgram attributeIndex:@"inputTextureCoordinate6"];
+        weak.inputTextureUniform6 = [weak.internalFilterProgram uniformIndex:@"inputImageTexture6"];
+        glEnableVertexAttribArray(weak.textureCoordinateAttribute6);
     });
     
     return self;
@@ -125,16 +126,17 @@
         return;
     }
     
+    __weak typeof(self) weak = self;
     runSynchronouslyOnVideoProcessingQueue(^{
-        [GPUImageContext setActiveShaderProgram:filterProgram];
-        outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:[self sizeOfFBO]
+        [GPUImageContext setActiveShaderProgram:weak.internalFilterProgram];
+        self->outputFramebuffer = [[GPUImageContext sharedFramebufferCache] fetchFramebufferForSize:[self sizeOfFBO]
                                                                                textureOptions:self.outputTextureOptions
                                                                                   onlyTexture:NO];
-        [outputFramebuffer activateFramebuffer];
+        [self->outputFramebuffer activateFramebuffer];
         
-        if (usingNextFrameForImageCapture)
+        if (self->usingNextFrameForImageCapture)
         {
-            [outputFramebuffer lock];
+            [self->outputFramebuffer lock];
         }
     });
     
@@ -148,33 +150,33 @@
     glUniform1i(filterInputTextureUniform, 2);
     
     glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, [inputFramebuffer2 texture]);
-    glUniform1i(inputTextureUniform2, 3);
+    glBindTexture(GL_TEXTURE_2D, [self.inputFramebuffer2 texture]);
+    glUniform1i(self.inputTextureUniform2, 3);
     
     glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, [inputFramebuffer3 texture]);
-    glUniform1i(inputTextureUniform3, 4);
+    glBindTexture(GL_TEXTURE_2D, [self.inputFramebuffer3 texture]);
+    glUniform1i(self.inputTextureUniform3, 4);
     
     glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_2D, [inputFramebuffer4 texture]);
-    glUniform1i(inputTextureUniform4, 5);
+    glBindTexture(GL_TEXTURE_2D, [self.inputFramebuffer4 texture]);
+    glUniform1i(self.inputTextureUniform4, 5);
     
     glActiveTexture(GL_TEXTURE6);
-    glBindTexture(GL_TEXTURE_2D, [inputFramebuffer5 texture]);
-    glUniform1i(inputTextureUniform5, 6);
+    glBindTexture(GL_TEXTURE_2D, [self.inputFramebuffer5 texture]);
+    glUniform1i(self.inputTextureUniform5, 6);
     
     glActiveTexture(GL_TEXTURE7);
-    glBindTexture(GL_TEXTURE_2D, [inputFramebuffer6 texture]);
-    glUniform1i(inputTextureUniform6, 7);
+    glBindTexture(GL_TEXTURE_2D, [self.inputFramebuffer6 texture]);
+    glUniform1i(self.inputTextureUniform6, 7);
     
     glVertexAttribPointer(filterPositionAttribute, 2, GL_FLOAT, 0, 0, vertices);
     glVertexAttribPointer(filterTextureCoordinateAttribute, 2, GL_FLOAT, 0, 0, textureCoordinates);
     const GLvoid* textureCoordinatesForRotation = [[self class] textureCoordinatesForRotation:inputRotation];
-    glVertexAttribPointer(textureCoordinateAttribute2, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
-    glVertexAttribPointer(textureCoordinateAttribute3, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
-    glVertexAttribPointer(textureCoordinateAttribute4, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
-    glVertexAttribPointer(textureCoordinateAttribute5, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
-    glVertexAttribPointer(textureCoordinateAttribute6, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
+    glVertexAttribPointer(self.textureCoordinateAttribute2, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
+    glVertexAttribPointer(self.textureCoordinateAttribute3, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
+    glVertexAttribPointer(self.textureCoordinateAttribute4, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
+    glVertexAttribPointer(self.textureCoordinateAttribute5, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
+    glVertexAttribPointer(self.textureCoordinateAttribute6, 2, GL_FLOAT, 0, 0, textureCoordinatesForRotation);
     
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     
@@ -185,42 +187,46 @@
     }
 }
 
+- (GLProgram *)internalFilterProgram {
+    return filterProgram;
+}
+
 - (void)clearTextures
 {
-    if (hasSetTexture1)
+    if (self.hasSetTexture1)
     {
         [firstInputFramebuffer unlock];
-        hasSetTexture1 = NO;
+        self.hasSetTexture1 = NO;
     }
     
-    if (hasSetTexture2)
+    if (self.hasSetTexture2)
     {
-        [inputFramebuffer2 unlock];
-        hasSetTexture2 = NO;
+        [self.inputFramebuffer2 unlock];
+        self.hasSetTexture2 = NO;
     }
     
-    if (hasSetTexture3)
+    if (self.hasSetTexture3)
     {
-        [inputFramebuffer3 unlock];
-        hasSetTexture3 = NO;
+        [self.inputFramebuffer3 unlock];
+        self.hasSetTexture3 = NO;
     }
     
-    if (hasSetTexture4)
+    if (self.hasSetTexture4)
     {
-        [inputFramebuffer4 unlock];
-        hasSetTexture4 = NO;
+        [self.inputFramebuffer4 unlock];
+        self.hasSetTexture4 = NO;
     }
     
-    if (hasSetTexture5)
+    if (self.hasSetTexture5)
     {
-        [inputFramebuffer5 unlock];
-        hasSetTexture5 = NO;
+        [self.inputFramebuffer5 unlock];
+        self.hasSetTexture5 = NO;
     }
     
-    if (hasSetTexture6)
+    if (self.hasSetTexture6)
     {
-        [inputFramebuffer6 unlock];
-        hasSetTexture6 = NO;
+        [self.inputFramebuffer6 unlock];
+        self.hasSetTexture6 = NO;
     }
 }
 
@@ -233,38 +239,38 @@
     if (textureIndex == 0)
     {
         firstInputFramebuffer = newInputFramebuffer;
-        hasSetTexture1 = YES;
+        self.hasSetTexture1 = YES;
         [firstInputFramebuffer lock];
     }
     else if (textureIndex == 1)
     {
-        inputFramebuffer2 = newInputFramebuffer;
-        hasSetTexture2 = YES;
-        [inputFramebuffer2 lock];
+        self.inputFramebuffer2 = newInputFramebuffer;
+        self.hasSetTexture2 = YES;
+        [self.inputFramebuffer2 lock];
     }
     else if (textureIndex == 2)
     {
-        inputFramebuffer3 = newInputFramebuffer;
-        hasSetTexture3 = YES;
-        [inputFramebuffer3 lock];
+        self.inputFramebuffer3 = newInputFramebuffer;
+        self.hasSetTexture3 = YES;
+        [self.inputFramebuffer3 lock];
     }
     else if (textureIndex == 3)
     {
-        inputFramebuffer4 = newInputFramebuffer;
-        hasSetTexture4 = YES;
-        [inputFramebuffer4 lock];
+        self.inputFramebuffer4 = newInputFramebuffer;
+        self.hasSetTexture4 = YES;
+        [self.inputFramebuffer4 lock];
     }
     else if (textureIndex == 4)
     {
-        inputFramebuffer5 = newInputFramebuffer;
-        hasSetTexture5 = YES;
-        [inputFramebuffer5 lock];
+        self.inputFramebuffer5 = newInputFramebuffer;
+        self.hasSetTexture5 = YES;
+        [self.inputFramebuffer5 lock];
     }
     else
     {
-        inputFramebuffer6 = newInputFramebuffer;
-        hasSetTexture6 = YES;
-        [inputFramebuffer6 lock];
+        self.inputFramebuffer6 = newInputFramebuffer;
+        self.hasSetTexture6 = YES;
+        [self.inputFramebuffer6 lock];
     }
 }
 

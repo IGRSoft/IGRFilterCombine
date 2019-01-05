@@ -97,8 +97,11 @@ const NSUInteger kOriginalImageIndex = 100000;
         [weak setFilteredPreviewImage:thumbImage toIndex:idx];
         [filter processImage:thumbImage
                completeBlock:^(UIImage * _Nullable processedImage) {
-                   [weak setFilteredPreviewImage:processedImage toIndex:idx];
-                   weak.processedPreviewImagesCompletion(processedImage, idx);
+                   __strong __typeof(weak) strongSelf = weak;
+                   if (strongSelf != nil) {
+                       [strongSelf setFilteredPreviewImage:processedImage toIndex:idx];
+                       strongSelf.processedPreviewImagesCompletion(processedImage, idx);
+                   }
                }];
     }];
     
@@ -112,8 +115,11 @@ const NSUInteger kOriginalImageIndex = 100000;
         [weak setFilteredImage:originalImage toIndex:idx];
         IGRBaseShaderFilterCancelBlock cancelBlock = [filter processImage:originalImage
                                                             completeBlock:^(UIImage * _Nullable processedImage) {
-                                                                [weak setFilteredImage:processedImage toIndex:idx];
-                                                                weak.processedImagesCompletion(processedImage, idx);
+                                                                __strong __typeof(weak) strongSelf = weak;
+                                                                if (strongSelf != nil) {
+                                                                    [strongSelf setFilteredImage:processedImage toIndex:idx];
+                                                                    strongSelf.processedImagesCompletion(processedImage, idx);
+                                                                }
                                                             }];
         [weak setCancelBlock:cancelBlock toIndex:idx];
     }];

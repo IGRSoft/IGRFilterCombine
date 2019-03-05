@@ -11,6 +11,16 @@ Replicate Instragram-style filters in Objective-C (Swift 3.0 Compatibility).
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/IGRFilterCombine.svg)](https://img.shields.io/cocoapods/v/IGRFilterCombine.svg)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://opensource.org/licenses/MIT)
 
+ ___
+### Contribute to Development Goals Here: 
+
+BTC: 16tGJzt4gJJBhBetpV6BuaWuNfxvkdkbt4
+
+BCH: bitcoincash:qpcwefpxddjqzdpcrx6tek3uh6x9v7t8tugu30jvks
+
+LTC: litecoin:MLZxuAdJCaW7LdM4sQuRazgdNvd8G2bdyt
+
+___
 ## How It Works
 It is built upon [GPUImage](https://github.com/BradLarson/GPUImage), written open sourced framework by [Brad Larson](http://stackoverflow.com/users/19679/brad-larson) that hanles low-level GPU interactions on **IGRFilterCombine**'s behalf.
 
@@ -37,11 +47,13 @@ For massively parallel operations like processing images or live video frames, G
 - Walden
 - Xproll
 
+___
 ## Requirements
 
 - Xcode 8.0+
 - iOS 9.0+
 
+___
 ## Installation
 
 ### CocoaPods
@@ -60,6 +72,7 @@ For [Carthage](https://github.com/Carthage/Carthage), add the following to your 
 github "IGRSoft/IGRFilterCombine"
 ```
 
+___
 ## Getting Started
 
 <details>
@@ -166,10 +179,12 @@ class ViewController: UIViewController {
  - [x] Add Filters to Images
  - [ ] Add Custom Filters
 
+___
 ## Credits
 
 `IGRFilterCombine` is owned and maintained by the [IGR Software and Vitalii Parovishnyk](https://igrsoft.com).
 
+___
 ## License
 
 `IGRFilterCombine` is MIT-licensed. We also provide an additional patent grant.

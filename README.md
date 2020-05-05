@@ -1,3 +1,6 @@
+[The Project is not served, please, enjoy forward :)]
+==
+
 # IGRFilterCombine
 
 Replicate Instragram-style filters in Objective-C (Swift 3.0 Compatibility).
